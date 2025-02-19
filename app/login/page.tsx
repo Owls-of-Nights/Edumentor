@@ -11,9 +11,34 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 export default function LoginPage() {
   const [userRole, setUserRole] = useState("student")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    // Handle form submission (integrate with Firebase here)
+    const form = e.currentTarget
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    })
+    const data = await res.json()
+    console.log(data)
+  }
+
+  async function handleSignup(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const form = e.currentTarget
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value
+    const role = userRole
+    const res = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password, role })
+    })
+    const data = await res.json()
+    console.log(data)
   }
 
   return (
@@ -30,15 +55,15 @@ export default function LoginPage() {
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
             <TabsContent value="login">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleLogin}>
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="Enter your email" required />
+                    <Input id="email" name="email" type="email" placeholder="Enter your email" required />
                   </div>
                   <div>
                     <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" placeholder="Enter your password" required />
+                    <Input id="password" name="password" type="password" placeholder="Enter your password" required />
                   </div>
                   <Button type="submit" className="w-full">
                     Login
@@ -47,19 +72,19 @@ export default function LoginPage() {
               </form>
             </TabsContent>
             <TabsContent value="signup">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSignup}>
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" placeholder="Enter your full name" required />
+                    <Input id="name" name="name" placeholder="Enter your full name" required />
                   </div>
                   <div>
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="Enter your email" required />
+                    <Input id="email" name="email" type="email" placeholder="Enter your email" required />
                   </div>
                   <div>
                     <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" placeholder="Create a password" required />
+                    <Input id="password" name="password" type="password" placeholder="Create a password" required />
                   </div>
                   <div>
                     <Label>User Role</Label>
